@@ -1,0 +1,9 @@
+{% extends "layouts/default.njk" %}
+
+{% block content %}
+    <ul>
+    {% for playlist in playlists %}
+        <li>{{ playlist.name }}</li>
+    {% endfor %}
+    </ul>
+{% endblock content %}
