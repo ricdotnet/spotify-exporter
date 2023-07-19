@@ -4,10 +4,11 @@ const nunjucks = require('nunjucks');
 require('dotenv').config();
 
 const { api } = require('./api');
+const { loadFilters } = require('./utils');
 
 const app = express();
 
-nunjucks.configure(path.join(__dirname, 'views'), {
+const njkEnv = nunjucks.configure(path.join(__dirname, 'views'), {
     autoescape: true,
     express: app,
 });
@@ -17,4 +18,8 @@ app.use(api);
 
 const PORT = process.env.PORT || 4000;
 
-app.listen(PORT, () => console.log(`Serving on port ${PORT}`));
+(async () => {
+    await loadFilters(njkEnv);
+    
+    app.listen(PORT, () => console.log(`Serving on port ${PORT}`));
+})();
