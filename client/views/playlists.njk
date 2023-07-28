@@ -1,9 +1,17 @@
 {% extends "layouts/default.njk" %}
 
+{% block head %}
+  {{ super() }}
+  
+  <link rel="stylesheet" href="/assets/playlists.css" />
+{% endblock %}
+
 {% block content %}
-  <ul>
-    {% for playlist in playlists %}
-      <li>{{ playlist.name }}</li>
-    {% endfor %}
-  </ul>
+  <div class="playlists-container">
+    <ul>
+      {% for playlist in playlists %}
+        <li>{{ playlist.name }}</li>
+      {% endfor %}
+    </ul>
+  </div>
 {% endblock content %}

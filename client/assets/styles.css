@@ -1,0 +1,32 @@
+:root {
+  --dark-bg: #051003;
+  --green: #54C04B;
+  --green-dark: #009482;
+  --green-light: #F4FCF1;
+}
+
+a, a:visited {
+  color: var(--green);
+}
+
+a:hover {
+  color: var(--green-dark);
+}
+
+body {
+  background-color: var(--dark-bg);
+  color: var(--green-light);
+}
+
+.container {
+  width: 95%;
+  margin: 0 auto;
+}
+
+/* Large devices such as laptops (1024px and up) */
+@media only screen and (min-width: 64em) {
+  .container {
+    width: 980px;
+    margin: 0 auto;
+  }
+}

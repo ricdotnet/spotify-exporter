@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    {% include "includes/head.njk" %}
-  </head>
+{% extends "./template.njk" %}
 
-  <body>
-    {% block content %}{% endblock content %}
-  </body>
-</html>
+{% block head %}
+  {% include "includes/head.njk" %}
+{% endblock %}

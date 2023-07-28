@@ -1,0 +1,16 @@
+{% extends "layouts/default.njk" %}
+
+{% block head %}
+  {{ super() }}
+  
+  <link rel="stylesheet" href="/assets/home.css" />
+{% endblock %}
+
+{% set titleSuffix = "Home" %}
+
+{% block content %}
+  <div class="login-container">
+    <h1>Export your Spotify playlists</h1>
+    <span class="link"><a href="/login">Login</a> with Spotify</span>
+  </div>
+{% endblock %}
