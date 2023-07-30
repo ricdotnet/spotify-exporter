@@ -13,18 +13,10 @@ async function callback(req, res) {
       'Authorization': `Basic ${Buffer.from(process.env.SPOTIFY_CLIENT_ID + ':' + process.env.SPOTIFY_CLIENT_SECRET).toString('base64')}`,
     },
   });
-
-  const user = await axios.get('https://api.spotify.com/v1/me', {
-    headers: {
-      'Authorization': `Bearer ${credentials.data.access_token}`,
-    },
-  });
-
-  const playlists = await axios.get(`https://api.spotify.com/v1/users/${user.data.id}/playlists`, {
-    headers: {
-      'Authorization': `Bearer ${credentials.data.access_token}`,
-    },
-  });
+  
+  req.session.spotify = credentials.data;
+  
+  return res.redirect('/playlists');
 
   // const playlist = await axios.get(`https://api.spotify.com/v1/playlists/some-id`, {
   //     headers: {
@@ -46,9 +38,9 @@ async function callback(req, res) {
   //   "Content-Disposition": `attachment; filename="tracks.csv"`,
   // }).send([['name', 'artist'].join(','), ...tracks].join('\n'));
 
-  return res.render('playlists.njk', {
-    playlists: playlists.data.items,
-  });
+  // return res.render('playlists.njk', {
+  //   playlists: playlists.data.items,
+  // });
 }
 
 module.exports = callback;

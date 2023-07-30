@@ -1,5 +1,11 @@
 const filters = {
-
+  console: (value) => {
+    if (typeof value === 'object') { 
+      return JSON.stringify(value);
+    }
+    
+    return value;
+  }
 };
 
 function loadFilters(nunjucks) {

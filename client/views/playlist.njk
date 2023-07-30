@@ -1,0 +1,22 @@
+{% extends "layouts/default.njk" %}
+
+{% set titleSuffix = "Tracks for " + id %}
+
+{% block content %}
+  <h1>Playlist: {{ name }}</h1>
+  
+  {% if prev %}
+    <a href="?page={{ prev }}">Previous</a>
+  {% endif %}
+  {% if next %}
+    <a href="?page={{ next }}">Next</a>
+  {% endif %}
+
+  <ul role="list">
+    {% for track in tracks %}
+      <li>
+        {{ track.name }} :: {{ track.id }}
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

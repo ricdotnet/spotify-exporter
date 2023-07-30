@@ -6,7 +6,13 @@
 
   <body>
     <div class="container">
+      {% if authed %}
+        {% include "includes/nav.njk" %}
+      {% endif %}
+      
       {% block content %}{% endblock %}
     </div>
+    
+    {% block footer %}{% endblock %}
   </body>
 </html>

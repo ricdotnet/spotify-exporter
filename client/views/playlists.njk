@@ -6,12 +6,21 @@
   <link rel="stylesheet" href="/assets/playlists.css" />
 {% endblock %}
 
+{% set titleSuffix = "Playlists for " + username %}
+
 {% block content %}
   <div class="playlists-container">
-    <ul>
+    <ul role="list">
       {% for playlist in playlists %}
-        <li>{{ playlist.name }}</li>
+        <li><a href="/playlist/{{ playlist.id }}">{{ playlist.name }}</a> :: {{ playlist.id }}</li>
       {% endfor %}
     </ul>
+    
+    {% if prev %}
+      <a href="?page={{ prev }}">Previous</a>
+    {% endif %}
+    {% if next %}
+      <a href="?page={{ next }}">Next</a>
+    {% endif %}
   </div>
 {% endblock content %}
