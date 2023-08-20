@@ -16,7 +16,9 @@
     "nunjucks": "^3.2.4"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.4",
     "gulp": "^4.0.2",
-    "gulp-nodemon": "^2.5.0"
+    "gulp-nodemon": "^2.5.0",
+    "rollup": "^3.28.0"
   }
 }

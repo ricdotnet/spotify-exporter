@@ -13,10 +13,12 @@ async function callback(req, res) {
       'Authorization': `Basic ${Buffer.from(process.env.SPOTIFY_CLIENT_ID + ':' + process.env.SPOTIFY_CLIENT_SECRET).toString('base64')}`,
     },
   });
-  
+
   req.session.spotify = credentials.data;
-  
+
   return res.redirect('/playlists');
+
+  //return res.redirect('/');
 
   // const playlist = await axios.get(`https://api.spotify.com/v1/playlists/some-id`, {
   //     headers: {

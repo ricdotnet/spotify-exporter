@@ -1,6 +1,6 @@
 function home(req, res) {
   
-  if (req.session.spotify) {
+  if (req.session && req.session.spotify) {
     return res.redirect('/playlists');
   }
   

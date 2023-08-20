@@ -1,7 +1,8 @@
 const fs = require('fs');
 const path = require('path');
-const { task, series, src, dest } = require('gulp');
+const { task, series, src, dest, parallel } = require('gulp');
 const nodemon = require('gulp-nodemon');
+const { exec } = require('child_process');
 
 function clean(env) {
   return (done) => {
@@ -17,8 +18,18 @@ function server() {
 }
 
 function client() {
-  return src('./client/**')
+  return src(['./client/**', '!./client/assets/js/**'])
     .pipe(dest(path.join(destination(), 'client')));
+}
+
+function javascript() {
+  const process = exec('rollup -c');
+
+  process.stdout.on('data', (data) => console.log(data.toString()));
+  process.stderr.on('data', (data) => console.log(data.toString()));
+  process.on('exit', (code) => console.log('process finished with code', code));
+
+  return process;
 }
 
 function destination() {
@@ -33,9 +44,9 @@ function runDev(done) {
     stdout: true,
     done: done,
   })
-    .on('restart', series(clean(), server, client));
+    .on('restart', series(clean(), server, parallel(client, javascript)));
 }
 
-task('dev', series(clean(), server, client, runDev));
-task('default', series(clean(), server, client));
+task('dev', series(clean(), server, parallel(client, javascript), runDev));
+task('default', series(clean(), server, parallel(client, javascript)));
 task('clean', series(clean('dev'), clean('dist')));

@@ -1,4 +1,5 @@
 const loadFilters = require('./filters').loadFilters;
+const constants = require('./constants');
 
 /**
  * 
@@ -14,4 +15,4 @@ function pagination(cp, t, pp) {
   }
 }
 
-module.exports = { loadFilters, pagination };
+module.exports = { loadFilters, pagination, constants };

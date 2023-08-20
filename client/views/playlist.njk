@@ -2,20 +2,37 @@
 
 {% set titleSuffix = "Tracks for " + id %}
 
+{% block head %}
+  {{ super() }}
+
+  <link rel="stylesheet" href="/assets/playlist.css"/>
+{% endblock %}
+
 {% block content %}
   <h1>Playlist: {{ name }}</h1>
-  
-  {% if prev %}
-    <a href="?page={{ prev }}">Previous</a>
-  {% endif %}
-  {% if next %}
-    <a href="?page={{ next }}">Next</a>
-  {% endif %}
+
+  <div class="actions">
+    <div class="pagination">
+      {% if prev %}
+        <a href="?page={{ prev }}">Previous</a>
+      {% endif %}
+      {% if next %}
+        <a href="?page={{ next }}">Next</a>
+      {% endif %}
+    </div>
+    <div class="selected">
+      {% set exportSelectedUrl = "/playlist/" + id + "/export" %}
+      <a href="{{ exportSelectedUrl }}">Export selected</a>
+      <a href="{{ exportSelectedUrl }}">Export all</a>
+      <span id="total-selected">{{ totalSelected }}</span> / 50 selected
+    </div>
+  </div>
 
   <ul role="list">
     {% for track in tracks %}
       <li>
-        {{ track.name }} :: {{ track.id }}
+        <input type="checkbox" data-type="song" data-song="{{ track.id }}" {{ "checked" if track.checked }}/>{{
+        track.name }} :: {{ track.id }}
       </li>
     {% endfor %}
   </ul>

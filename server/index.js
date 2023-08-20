@@ -1,42 +1,75 @@
 const path = require('path');
 const express = require('express');
 const cookieSession = require('cookie-session');
-const nunjucks = require('nunjucks');
 require('dotenv').config();
 
 const { api } = require('./api');
-const { loadFilters } = require('./utils');
 const auth = require('./middlewares/auth');
+const { Nunjucks } = require('./modules/nunjucks');
+const Sessions = require('./modules/sessions');
 
 const app = express();
+const development = process.env.NODE_ENV === 'development';
 
-const njkEnv = nunjucks.configure(path.join(process.cwd(), 'client', 'views'), {
-  autoescape: true,
-  express: app,
-});
+new Nunjucks(app).loadFilters();
+app.sessions = new Sessions();
 
 app.use((req, _res, next) => {
   console.log(req.method, ':', req.url);
   next();
 });
 
-app.use(cookieSession({
-  name: 'session',
-  keys: [process.env.SIGN_KEY, process.env.VERIFY_KEY],
-  sameSite: true,
-}));
+// app.use(cookieSession({
+//   name: 'spotify-exporter',
+//   keys: [process.env.SIGN_KEY, process.env.VERIFY_KEY],
+//   sameSite: true,
+// }));
 
 // app.use(auth);
 
 app.use((req, res, next) => {
-  if (req.session.spotify) {
-    res.locals.authed = true;
+  const cookie = req.headers.cookie;
+
+  const key = app.sessions.generateKey();
+
+  if (cookie) {
+    const [_, cookieKey] = cookie.split('=');
+    let session = app.sessions.get(cookieKey);
+
+    if (!session) {
+      app.sessions.add(cookieKey);
+      session = app.sessions.get(cookieKey);
+    }
+
+    req.session = session;
+    req.cookieKey = cookieKey;
+    req.sessionClear = app.sessions;
+
+    res.cookie('spotify-exporter', cookieKey, {
+      expires: new Date(Date.now() + (1000 * 60 * 60 * 24)),
+      httpOnly: true,
+    });
+  } else {
+    app.sessions.add(key);
+    const session = app.sessions.get(key);
+
+    req.session = session;
+
+    console.log(req.session);
+    res.cookie('spotify-exporter', key, {
+      expires: new Date(Date.now() + (1000 * 60 * 60 * 24)),
+      httpOnly: true,
+    });
   }
-  
+
   next();
 });
 
-app.use('/assets', express.static(path.join(process.cwd(), 'client', 'assets')));
+const assetsDir = development
+  ? path.join(process.cwd(), 'dev', 'client', 'assets')
+  : path.join(process.cwd(), 'client', 'assets');
+
+app.use('/assets', express.static(assetsDir));
 app.use(api);
 
 app.use((_req, res, next) => {
@@ -56,9 +89,4 @@ app.use((_req, res, next) => {
 });
 
 const PORT = process.env.PORT || 4000;
-
-(async () => {
-  await loadFilters(njkEnv);
-
-  app.listen(PORT, () => console.log(`Serving on port ${PORT}`));
-})();
+app.listen(PORT, () => console.log(`Serving on port ${PORT}`));

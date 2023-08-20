@@ -9,18 +9,17 @@
 {% set titleSuffix = "Playlists for " + username %}
 
 {% block content %}
+  {% if prev %}
+    <a href="?page={{ prev }}">Previous</a>
+  {% endif %}
+  {% if next %}
+    <a href="?page={{ next }}">Next</a>
+  {% endif %}
   <div class="playlists-container">
     <ul role="list">
       {% for playlist in playlists %}
-        <li><a href="/playlist/{{ playlist.id }}">{{ playlist.name }}</a> :: {{ playlist.id }}</li>
+        <li><a href="/playlist/{{ playlist.id }}">{{ playlist.name or "<i>Unnamed Playlist</i>" | safe }}</a> :: {{ playlist.id }}</li>
       {% endfor %}
     </ul>
-    
-    {% if prev %}
-      <a href="?page={{ prev }}">Previous</a>
-    {% endif %}
-    {% if next %}
-      <a href="?page={{ next }}">Next</a>
-    {% endif %}
   </div>
 {% endblock content %}
