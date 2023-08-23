@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { constants, pagination } = require('../utils');
+const SessionManager = require("../modules/session-manager");
 
 async function playlist(req, res) {
   const { id } = req.params;
@@ -10,21 +11,24 @@ async function playlist(req, res) {
     params += `&offset=${constants.PAGE_SIZE * (page - 1)}`;
   }
 
+  const sessionManager = SessionManager.getInstance();
+  const session = JSON.parse(await sessionManager.get(req.cookieKey));
+
   try {
     const playlistDetails = await axios.get(`https://api.spotify.com/v1/playlists/${id}`, {
       headers: {
-        'Authorization': `Bearer ${req.session.spotify.access_token}`,
+        'Authorization': `Bearer ${session.spotify.access_token}`,
       },
     });
 
     const playlist = await axios.get(`https://api.spotify.com/v1/playlists/${id}/tracks${params}`, {
       headers: {
-        'Authorization': `Bearer ${req.session.spotify.access_token}`,
+        'Authorization': `Bearer ${session.spotify.access_token}`,
       },
     });
 
-    if (typeof req.session.playlist === 'undefined') {
-      req.session.playlist = {
+    if (typeof session.playlist === 'undefined') {
+      session.playlist = {
         id: id,
         selected: [],
       }
@@ -34,19 +38,19 @@ async function playlist(req, res) {
       prev.push({
         name: track.track.name,
         id: track.track.id,
-        checked: req.session.playlist.selected.includes(track.track.id),
+        checked: session.playlist.selected.includes(track.track.id),
       });
       return prev;
     }, []);
 
-    console.log(req.session.spotify);
+    await sessionManager.update(req.cookieKey, session);
 
     return res.render('playlist.njk', {
       tracks,
       name: playlistDetails.data.name,
       id: id,
       ...pagination(+page || 1, playlist.data.total, 50),
-      totalSelected: req.session.playlist.selected.length,
+      totalSelected: session.playlist.selected.length,
     });
   } catch (err) {
     console.error(err.toString());
@@ -59,24 +63,30 @@ async function selectSong(req, res) {
   const { id } = req.params;
   const { action } = req.query;
 
+  const sessionManager = SessionManager.getInstance();
+  const session = JSON.parse(await sessionManager.get(req.cookieKey));
+
   switch (action) {
     case 'select':
-      req.session.playlist.selected.push(id);
+      session.playlist.selected.push(id);
       break;
     case 'deselect':
-      const index = req.session.playlist.selected.indexOf(id);
+      const index = session.playlist.selected.indexOf(id);
       if (index === -1) return;
 
-      req.session.playlist.selected.splice(index, 1);
+      session.playlist.selected.splice(index, 1);
+      break;
     default:
       // send an error
       break;
   }
 
+  await sessionManager.update(req.cookieKey, session);
+
   return res.status(200).send({
     action: 'selected',
     id: req.params['id'],
-    totalSelected: req.session.playlist.selected.length,
+    totalSelected: session.playlist.selected.length,
   });
 }
 

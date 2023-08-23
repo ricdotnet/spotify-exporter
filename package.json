@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "NODE_ENV=development gulp dev",
     "build": "gulp",
-    "clean": "gulp clean"
+    "clean": "gulp clean",
+    "test": "vitest"
   },
   "dependencies": {
     "axios": "^1.4.0",
@@ -19,6 +20,7 @@
     "@rollup/plugin-commonjs": "^25.0.4",
     "gulp": "^4.0.2",
     "gulp-nodemon": "^2.5.0",
-    "rollup": "^3.28.0"
+    "rollup": "^3.28.0",
+    "vitest": "^0.34.2"
   }
 }

@@ -1,62 +1,38 @@
 const path = require('path');
 const express = require('express');
-const cookieSession = require('cookie-session');
 require('dotenv').config();
 
-const { api } = require('./api');
+const {api} = require('./api');
 const auth = require('./middlewares/auth');
-const { Nunjucks } = require('./modules/nunjucks');
-const Sessions = require('./modules/sessions');
+const {Nunjucks} = require('./modules/nunjucks');
+const SessionManager = require('./modules/session-manager');
 
 const app = express();
 const development = process.env.NODE_ENV === 'development';
 
 new Nunjucks(app).loadFilters();
-app.sessions = new Sessions();
+new SessionManager({storage: 'file'});
 
 app.use((req, _res, next) => {
   console.log(req.method, ':', req.url);
   next();
 });
 
-// app.use(cookieSession({
-//   name: 'spotify-exporter',
-//   keys: [process.env.SIGN_KEY, process.env.VERIFY_KEY],
-//   sameSite: true,
-// }));
-
 // app.use(auth);
 
 app.use((req, res, next) => {
   const cookie = req.headers.cookie;
 
-  const key = app.sessions.generateKey();
-
   if (cookie) {
+    const sessionManager = SessionManager.getInstance();
+
     const [_, cookieKey] = cookie.split('=');
-    let session = app.sessions.get(cookieKey);
-
-    if (!session) {
-      app.sessions.add(cookieKey);
-      session = app.sessions.get(cookieKey);
-    }
-
-    req.session = session;
+    req.session = sessionManager.get(cookieKey);
     req.cookieKey = cookieKey;
-    req.sessionClear = app.sessions;
+
+    res.locals.authed = true;
 
     res.cookie('spotify-exporter', cookieKey, {
-      expires: new Date(Date.now() + (1000 * 60 * 60 * 24)),
-      httpOnly: true,
-    });
-  } else {
-    app.sessions.add(key);
-    const session = app.sessions.get(key);
-
-    req.session = session;
-
-    console.log(req.session);
-    res.cookie('spotify-exporter', key, {
       expires: new Date(Date.now() + (1000 * 60 * 60 * 24)),
       httpOnly: true,
     });
@@ -76,7 +52,7 @@ app.use((_req, res, next) => {
   const listener = (error) => {
     console.log('---------- UNHANDLED PROMISE REJECTION -----------');
     console.log(error);
-    res.status(500).send({ code: 500, message: 'something went wrong' });
+    res.status(500).send({code: 500, message: 'something went wrong'});
   };
 
   process.once('UncaughtExceptionListener', listener);

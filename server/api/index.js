@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const { home, login, callback, playlist, playlists, selectSong, exportPlaylist } = require('../controllers');
+const SessionManager = require('../modules/session-manager');
 
 const api = Router();
 
@@ -12,9 +13,10 @@ api.post('/playlist/:id/select', selectSong);
 api.get('/playlist/:id/export', exportPlaylist);
 
 api.get('/logout', (req, res) => {
-  req.sessionClear.remove(req.cookieKey);
+  const sessionManager = SessionManager.getInstance();
+  sessionManager.remove(req.cookieKey);
 
-  res.clearCookie();
+  res.clearCookie('spotify-exporter');
 
   return res.redirect('/');
 });
