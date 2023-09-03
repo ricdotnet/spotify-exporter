@@ -48,6 +48,7 @@ const assetsDir = development
 app.use('/assets', express.static(assetsDir));
 app.use(api);
 
+// TODO: refactor
 app.use((_req, res, next) => {
   const listener = (error) => {
     console.log('---------- UNHANDLED PROMISE REJECTION -----------');

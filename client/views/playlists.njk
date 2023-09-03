@@ -1,24 +1,39 @@
 {% extends "layouts/default.njk" %}
 
+{% from "macros/button.njk" import button %}
+
 {% block head %}
   {{ super() }}
-  
-  <link rel="stylesheet" href="/assets/playlists.css" />
+
+  <link rel="stylesheet" href="/assets/playlists.css"/>
 {% endblock %}
 
 {% set titleSuffix = "Playlists for " + username %}
 
 {% block content %}
-  {% if prev %}
-    <a href="?page={{ prev }}">Previous</a>
-  {% endif %}
-  {% if next %}
-    <a href="?page={{ next }}">Next</a>
-  {% endif %}
+  <div class="actions">
+    <div class="pagination">
+      {% if prev %}
+        {{ button({
+          text: "Previous",
+          href: "?page=" + prev
+        }) }}
+      {% endif %}
+      {% if next %}
+        {{ button({
+          text: "Next",
+          href: "?page=" + next
+        }) }}
+      {% endif %}
+    </div>
+  </div>
   <div class="playlists-container">
     <ul role="list">
       {% for playlist in playlists %}
-        <li><a href="/playlist/{{ playlist.id }}">{{ playlist.name or "<i>Unnamed Playlist</i>" | safe }}</a> :: {{ playlist.id }}</li>
+        <li>
+          <a href="/playlist/{{ playlist.id }}">{{ playlist.name or "<i>Unnamed Playlist</i>" | safe }}</a>
+          :: {{ playlist.id }}
+        </li>
       {% endfor %}
     </ul>
   </div>

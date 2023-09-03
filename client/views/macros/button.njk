@@ -1,0 +1,7 @@
+{% macro button(params) %}
+  {% if params.href %}
+    <a class="button" href="{{ params.href }}">{{ params.text }}</a>
+  {% else %}
+    <button class="button" type="{{ params.type or "button" }}">{{ params.text }}</button>
+  {% endif %}
+{% endmacro %}

@@ -1,5 +1,7 @@
 {% extends "layouts/default.njk" %}
 
+{% from "macros/button.njk" import button %}
+
 {% set titleSuffix = "Tracks for " + id %}
 
 {% block head %}
@@ -14,17 +16,23 @@
   <div class="actions">
     <div class="pagination">
       {% if prev %}
-        <a href="?page={{ prev }}">Previous</a>
+        {{ button({
+          text: "Previous",
+          href: "?page=" + prev
+        }) }}
       {% endif %}
       {% if next %}
-        <a href="?page={{ next }}">Next</a>
+        {{ button({
+          text: "Next",
+          href: "?page=" + next
+        }) }}
       {% endif %}
     </div>
     <div class="selected">
       {% set exportSelectedUrl = "/playlist/" + id + "/export" %}
       <a href="{{ exportSelectedUrl }}">Export selected</a>
       <a href="{{ exportSelectedUrl }}">Export all</a>
-      <span id="total-selected">{{ totalSelected }}</span> / 50 selected
+      <span><span id="total-selected">{{ totalSelected }}</span> / 50 selected</span>
     </div>
   </div>
 
