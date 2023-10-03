@@ -6,7 +6,7 @@ async function selectSong(event) {
   const songId = event.target.getAttribute('data-song');
   const action = event.target.checked ? 'select' : 'deselect';  
 
-  const response = await fetch(`/playlist/${songId}/select?action=${action}`, {
+  const response = await fetch(`/playlist/is/song/${songId}/select?action=${action}`, {
     method: 'POST',
   });
   const data = await response.json();
