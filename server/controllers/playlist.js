@@ -2,7 +2,7 @@ const axios = require('axios');
 const { constants, pagination } = require('../utils');
 const SessionManager = require("../modules/session-manager");
 
-async function getPlaylist(req, res) {
+async function getPlaylist (req, res) {
   const { playlist } = req.params;
   const { page } = req.query;
   let params = `?limit=${constants.PAGE_SIZE}`;
@@ -59,7 +59,7 @@ async function getPlaylist(req, res) {
   }
 }
 
-async function selectSong(req, res) {
+async function selectSong (req, res) {
   const { song } = req.params;
   const { action } = req.query;
 
@@ -90,7 +90,7 @@ async function selectSong(req, res) {
   });
 }
 
-async function exportPlaylist(req, res) {
+async function exportPlaylist (req, res) {
   const { playlist } = req.params;
 
   console.log('exporting playlist:', playlist);

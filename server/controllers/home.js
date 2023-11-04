@@ -1,9 +1,9 @@
-function home(req, res) {
-  
+function home (req, res) {
+
   if (req.session && req.session.spotify) {
     return res.redirect('/playlists');
   }
-  
+
   return res.render('home.njk');
 }
 

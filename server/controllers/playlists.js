@@ -2,7 +2,7 @@ const axios = require('axios');
 const { constants, pagination } = require('../utils');
 const SessionManager = require('../modules/session-manager');
 
-module.exports = async function playlists(req, res) {
+module.exports = async function playlists (req, res) {
   const { page } = req.query;
   let params = `?limit=${constants.PAGE_SIZE}`;
 
@@ -30,9 +30,7 @@ module.exports = async function playlists(req, res) {
     await sessionManager.update(req.cookieKey, session);
 
     return res.render('playlists.njk', {
-      playlists: playlists.data.items,
-      username: user.data.id,
-      ...pagination(+page || 1, playlists.data.total, 25),
+      playlists: playlists.data.items, username: user.data.id, ...pagination(+page || 1, playlists.data.total, 25),
     });
   } catch (err) {
     console.error(err.toString());

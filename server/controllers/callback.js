@@ -1,7 +1,7 @@
 const axios = require('axios');
 const SessionManager = require('../modules/session-manager');
 
-async function callback(req, res) {
+async function callback (req, res) {
   const { code } = req.query;
 
   const credentials = await axios.post('https://accounts.spotify.com/api/token', {

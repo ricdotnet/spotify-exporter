@@ -2,16 +2,16 @@ const path = require('path');
 const express = require('express');
 require('dotenv').config();
 
-const {api} = require('./api');
+const { api } = require('./api');
 const auth = require('./middlewares/auth');
-const {Nunjucks} = require('./modules/nunjucks');
+const { Nunjucks } = require('./modules/nunjucks');
 const SessionManager = require('./modules/session-manager');
 
 const app = express();
 const development = process.env.NODE_ENV === 'development';
 
 new Nunjucks(app).loadFilters();
-new SessionManager({storage: 'file'});
+new SessionManager({ storage: 'file' });
 
 app.use((req, _res, next) => {
   console.log(req.method, ':', req.url);
@@ -53,7 +53,7 @@ app.use((_req, res, next) => {
   const listener = (error) => {
     console.log('---------- UNHANDLED PROMISE REJECTION -----------');
     console.log(error);
-    res.status(500).send({code: 500, message: 'something went wrong'});
+    res.status(500).send({ code: 500, message: 'something went wrong' });
   };
 
   process.once('UncaughtExceptionListener', listener);

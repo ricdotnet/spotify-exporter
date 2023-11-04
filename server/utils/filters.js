@@ -1,9 +1,9 @@
 const filters = {
   console: (value) => {
-    if (typeof value === 'object') { 
+    if (typeof value === 'object') {
       return JSON.stringify(value);
     }
-    
+
     return value;
   },
 };

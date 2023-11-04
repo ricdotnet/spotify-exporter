@@ -1,6 +1,6 @@
 .env
-yarn.lock
 
+.idea
 .yarn
 node_modules
 dist

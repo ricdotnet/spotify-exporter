@@ -3,7 +3,7 @@ const fs = require('fs/promises');
 const path = require('path');
 
 module.exports = class SessionManager {
-  constructor(options = {}) {
+  constructor (options = {}) {
     if (SessionManager.instance) {
       return SessionManager.instance;
     }
@@ -25,11 +25,11 @@ module.exports = class SessionManager {
     return this;
   }
 
-  static getInstance() {
+  static getInstance () {
     return SessionManager.instance;
   }
 
-  async create(id) {
+  async create (id) {
     if (this.options.storage === 'file') {
       const defaultData = {
         created: Date.now(),
@@ -41,14 +41,14 @@ module.exports = class SessionManager {
     this.sessions.set(id, {});
   }
 
-  async get(id) {
+  async get (id) {
     if (this.options.storage === 'file') {
       return fs.readFile(this.buildFilePath(id), 'utf-8');
     }
     return this.sessions.get(id);
   }
 
-  async add(id, partial) {
+  async add (id, partial) {
     const filePath = this.buildFilePath(id);
 
     const buffer = await fs.readFile(filePath);
@@ -58,7 +58,7 @@ module.exports = class SessionManager {
   }
 
   // this will rewrite the session completely
-  async update(id, data) {
+  async update (id, data) {
     if (this.options.storage === 'file') {
       const filePath = this.buildFilePath(id);
 
@@ -71,7 +71,7 @@ module.exports = class SessionManager {
     this.sessions.set(id, data);
   }
 
-  async remove(id) {
+  async remove (id) {
     if (!id) return console.log('no id');
 
     if (this.options.storage === 'file') {
@@ -81,11 +81,11 @@ module.exports = class SessionManager {
     this.sessions.delete(id);
   }
 
-  buildFilePath(id) {
+  buildFilePath (id) {
     return path.join(process.cwd(), 'server', 'sessions', `session_${id}.json`);
   }
 
-  static generateKey() {
+  static generateKey () {
     return crypto.randomBytes(16).toString('hex');
   }
 }

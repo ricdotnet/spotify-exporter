@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 
-function login(req, res) {
+function login (req, res) {
   const state = crypto.randomBytes(16).toString('hex');
   const scope = 'user-read-private user-read-email playlist-read-private playlist-read-collaborative';
 
