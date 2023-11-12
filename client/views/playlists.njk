@@ -1,6 +1,7 @@
 {% extends "layouts/default.njk" %}
 
 {% from "macros/button.njk" import button %}
+{% from "macros/table.njk" import table %}
 
 {% block head %}
   {{ super() }}
@@ -25,16 +26,34 @@
           href: "?page=" + next
         }) }}
       {% endif %}
+      <span class="current-page">Page {{ currentPage }}</span>
     </div>
   </div>
   <div class="playlists-container">
-    <ul role="list">
-      {% for playlist in playlists %}
-        <li>
-          <a href="/playlist/{{ playlist.id }}">{{ playlist.name or "<i>Unnamed Playlist</i>" | safe }}</a>
-          :: {{ playlist.id }}
-        </li>
-      {% endfor %}
-    </ul>
+    {% set rows = [] %}
+    {% for playlist in playlists %}
+      {% set rows = (rows.push([
+        {
+          text: '<a href="/playlist/' + playlist.id + '">' + (playlist.name or playlist.id) + "</a>"
+        },
+        {
+          text: playlist.tracks.total,
+          type: "number"
+        }
+      ]), rows) %}
+    {% endfor %}
+
+    {{ table({
+      thead: [
+        {
+          text: "Playlist name"
+        },
+        {
+          text: "Total tracks",
+          type: "number"
+        }
+      ],
+      rows: rows
+    }) }}
   </div>
 {% endblock content %}

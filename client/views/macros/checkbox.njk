@@ -1,0 +1,7 @@
+{% macro checkbox(params) %}
+  <input type="checkbox"
+         {% if params.id %}id="{{ params.id }}"{% endif %}
+         {% for key, value in params.attributes %}{{ key }}="{{ value }}"{% endfor %}
+         {{ "checked" if params.checked }}
+  />
+{% endmacro %}

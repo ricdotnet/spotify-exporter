@@ -1,5 +1,6 @@
 const loadFilters = require('./filters').loadFilters;
 const constants = require('./constants');
+const fmt = require('./spotify-api');
 
 /**
  *
@@ -15,4 +16,4 @@ function pagination (cp, t, pp) {
   }
 }
 
-module.exports = { loadFilters, pagination, constants };
+module.exports = { loadFilters, pagination, constants, fmt };

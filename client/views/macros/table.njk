@@ -1,0 +1,25 @@
+{% macro table(params) %}
+  <table class="table">
+    <thead>
+    <tr class="table-row table-row__head">
+      {% for th in params.thead %}
+        <th class="table-row__cell {% if th.type === 'number' %}table-row__cell-number{% endif %} {{ th.classes }}">
+          {{ th.text }}
+        </th>
+      {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+
+    {% for row in params.rows %}
+      <tr class="table-row table-row__body">
+        {% for tr in row %}
+          <td class="table-row__cell {% if tr.type === 'number' %}table-row__cell-number{% endif %} {{ tr.classes }}">
+            {{ tr.text | safe }}
+          </td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endmacro %}

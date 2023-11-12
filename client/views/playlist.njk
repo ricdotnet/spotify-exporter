@@ -1,6 +1,8 @@
 {% extends "layouts/default.njk" %}
 
 {% from "macros/button.njk" import button %}
+{% from "macros/table.njk" import table %}
+{% from "macros/checkbox.njk" import checkbox %}
 
 {% set titleSuffix = "Tracks for " + id %}
 
@@ -27,21 +29,57 @@
           href: "?page=" + next
         }) }}
       {% endif %}
+      <span class="current-page">Page {{ currentPage }} of {{ totalPages }}</span>
     </div>
     <div class="selected">
       {% set exportSelectedUrl = "/playlist/" + id + "/export" %}
       <a href="{{ exportSelectedUrl }}">Export selected</a>
       <a href="{{ exportSelectedUrl }}">Export all</a>
-      <span><span id="total-selected">{{ totalSelected }}</span> / 50 selected</span>
+      <span><span id="total-selected">{{ totalSelected }}</span> / {{ playlistTotal }} selected</span>
     </div>
   </div>
 
-  <ul role="list">
+  <div class="playlist-container">
+    {% set rows = [] %}
     {% for track in tracks %}
-      <li>
-        <input type="checkbox" data-type="song" data-song="{{ track.id }}" {{ "checked" if track.checked }}/>{{
-        track.name }} :: {{ track.id }}
-      </li>
+
+      {% set checkboxHtml = checkbox({
+        checked: track.checked,
+        attributes: {
+          "data-type": "song",
+          "data-song": track.id,
+          title: "Checkbox for " + track.id
+        }
+      }) %}
+
+      {% set rows = (rows.push([
+        {
+          text: checkboxHtml,
+          classes: "checkbox-cell"
+        },
+        {
+          text: track.name
+        }
+      ]), rows) %}
     {% endfor %}
-  </ul>
+
+    {{ table({
+      thead: [
+        {},
+        {
+          text: "Song"
+        }
+      ],
+      rows: rows
+    }) }}
+  </div>
+
+{#  <ul role="list">#}
+{#    {% for track in tracks %}#}
+{#      <li>#}
+{#        <input type="checkbox" data-type="song" data-song="{{ track.id }}" {{ "checked" if track.checked }}/>{{#}
+{#        track.name }} :: {{ track.id }}#}
+{#      </li>#}
+{#    {% endfor %}#}
+{#  </ul>#}
 {% endblock %}

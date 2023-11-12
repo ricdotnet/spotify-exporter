@@ -12,12 +12,13 @@ exports.Nunjucks = class Nunjucks {
   }
 
   loadFilters () {
+    console.time('Filters loaded in');
     Object.keys(filters).forEach((key) => {
-      console.time('Loaded in');
       console.debug('Loading nunjucks filter:', key);
       this.njkEnv.addFilter(key, filters[key]);
-      console.timeEnd('Loaded in');
+      console.debug('Loaded nunjucks filter:', key);
     });
+    console.timeEnd('Filters loaded in');
   }
 
 }

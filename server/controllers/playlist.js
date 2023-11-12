@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { constants, pagination } = require('../utils');
+const { constants, pagination, fmt } = require('../utils');
 const SessionManager = require("../modules/session-manager");
 
 async function getPlaylist (req, res) {
@@ -15,17 +15,24 @@ async function getPlaylist (req, res) {
   const session = JSON.parse(await sessionManager.get(req.cookieKey));
 
   try {
-    const playlistDetails = await axios.get(`https://api.spotify.com/v1/playlists/${playlist}`, {
-      headers: {
-        'Authorization': `Bearer ${session.spotify.access_token}`,
-      },
-    });
+    const endpoints = [];
+    endpoints.push(
+      axios.get(fmt('playlist', playlist), {
+        headers: {
+          'Authorization': `Bearer ${session.spotify.access_token}`,
+        },
+      })
+    );
 
-    const playlistTracks = await axios.get(`https://api.spotify.com/v1/playlists/${playlist}/tracks${params}`, {
-      headers: {
-        'Authorization': `Bearer ${session.spotify.access_token}`,
-      },
-    });
+    endpoints.push(
+      axios.get(fmt('tracks', playlist, params), {
+        headers: {
+          'Authorization': `Bearer ${session.spotify.access_token}`,
+        },
+      })
+    );
+
+    const [playlistDetails, playlistTracks] = await Promise.all(endpoints);
 
     if (typeof session.playlist === 'undefined') {
       session.playlist = {
@@ -49,8 +56,11 @@ async function getPlaylist (req, res) {
       tracks,
       name: playlistDetails.data.name,
       id: playlist,
-      ...pagination(+page || 1, playlistTracks.data.total, 50),
+      ...pagination(+page || 1, playlistTracks.data.total, constants.PAGE_SIZE),
       totalSelected: session.playlist.selected.length,
+      playlistTotal: playlistTracks.data.total,
+      currentPage: page || 1,
+      totalPages: Math.ceil(playlistTracks.data.total / constants.PAGE_SIZE),
     });
   } catch (err) {
     console.error(err.toString());

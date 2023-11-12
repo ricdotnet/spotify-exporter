@@ -1,7 +1,8 @@
 const path = require('path');
 const express = require('express');
-require('dotenv').config();
+const envFile = process.env.NODE_ENV === 'production' ? '.env' : '.env.development';
 
+require('dotenv').config({ path: envFile });
 const { api } = require('./api');
 const auth = require('./middlewares/auth');
 const { Nunjucks } = require('./modules/nunjucks');
@@ -66,4 +67,4 @@ app.use((_req, res, next) => {
 });
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`Serving on port ${PORT}`));
+app.listen(PORT, () => console.log(`Serving on: ${process.env.BASE_DOMAIN}`));
