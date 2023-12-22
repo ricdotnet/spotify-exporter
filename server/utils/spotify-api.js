@@ -1,8 +1,9 @@
 const urls = {
-  user: 'https://api.spotify.com/v1/me',
-  playlists: 'https://api.spotify.com/v1/users/{}/playlists{}',
-  playlist: 'https://api.spotify.com/v1/playlists/{}',
-  tracks: 'https://api.spotify.com/v1/playlists/{}/tracks{}',
+  user: '/me',
+  playlists: '/users/{}/playlists{}',
+  playlist: '/playlists/{}',
+  tracks: '/playlists/{}/tracks{}',
+  track: '/tracks/{}'
 }
 
 function fmt(key, ...strings) {

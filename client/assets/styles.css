@@ -22,7 +22,7 @@ a:hover {
 body {
   background-color: var(--dark-bg);
   color: var(--green-light);
-  
+
   font-family: sans-serif;
   font-size: 14px;
 
@@ -38,38 +38,41 @@ table {
   border-collapse: collapse;
 }
 
-input[type="checkbox"] {
-  appearance: none;
-  cursor: pointer;
-  margin: 0;
-  font: inherit;
-  width: 1.5em;
-  height: 1.5em;
-  border: 0.1em solid #ccc;
-  border-radius: 0.45em;
+.checkbox {
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 
-  &::before {
-    content: "";
-    position: absolute;
-    width: 60%;
-    height: 60%;
-    background-color: var(--green);
-    border-radius: 0.25rem;
-    display: none;
-  }
-
-  &:checked::before {
+  .checkbox__item {
+    appearance: none;
+    cursor: pointer;
+    margin: 0;
+    font: inherit;
+    width: 1.5em;
+    height: 1.5em;
+    border: 0.1em solid var(--text-dim);
+    border-radius: 0.45em;
+    position: relative;
     display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:checked + .checkbox__checkmark {
+      background-color: var(--green-dark);
+      transform: scale(1);
+    }
   }
 
-  @media print {
-    &::before {
-      box-shadow: inset 10rem 10rem var(--green);
-    }
+  .checkbox__checkmark {
+    width: 1.5em;
+    height: 1.5em;
+    display: flex;
+    position: absolute;
+    top: 0;
+    z-index: -1;
+    border-radius: 0.45em;
+    transform: scale(0);
+    transition: ease-in-out 100ms;
+    align-items: center;
+    justify-content: center;
   }
 }
 
@@ -99,9 +102,9 @@ input[type="checkbox"] {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
+
   padding: 0 10px;
-  
+
   background: var(--green-dark);
 }
 

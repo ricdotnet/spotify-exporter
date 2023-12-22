@@ -1,8 +1,7 @@
-const axios = require('axios');
-const { constants, pagination, fmt } = require('../utils');
+const { constants, pagination, fmt, sleep, axiosInstance, buildCsv } = require('../utils');
 const SessionManager = require("../modules/session-manager");
 
-async function getPlaylist (req, res) {
+async function getPlaylist(req, res) {
   const { playlist } = req.params;
   const { page } = req.query;
   let params = `?limit=${constants.PAGE_SIZE}`;
@@ -17,19 +16,8 @@ async function getPlaylist (req, res) {
   try {
     const endpoints = [];
     endpoints.push(
-      axios.get(fmt('playlist', playlist), {
-        headers: {
-          'Authorization': `Bearer ${session.spotify.access_token}`,
-        },
-      })
-    );
-
-    endpoints.push(
-      axios.get(fmt('tracks', playlist, params), {
-        headers: {
-          'Authorization': `Bearer ${session.spotify.access_token}`,
-        },
-      })
+      axiosInstance('get', session.spotify.access_token, fmt('playlist', playlist)),
+      axiosInstance('get', session.spotify.access_token, fmt('tracks', playlist, params)),
     );
 
     const [playlistDetails, playlistTracks] = await Promise.all(endpoints);
@@ -69,7 +57,7 @@ async function getPlaylist (req, res) {
   }
 }
 
-async function selectSong (req, res) {
+async function selectSong(req, res) {
   const { song } = req.params;
   const { action } = req.query;
 
@@ -100,12 +88,61 @@ async function selectSong (req, res) {
   });
 }
 
-async function exportPlaylist (req, res) {
+async function exportPlaylist(req, res) {
   const { playlist } = req.params;
+  const sessionManager = SessionManager.getInstance();
+  const session = JSON.parse(await sessionManager.get(req.cookieKey));
 
-  console.log('exporting playlist:', playlist);
+  try {
+    const response = await recursiveFetch(playlist, session.spotify.access_token, { tracks: [] });
+    response.count = response.tracks.length;
 
-  return res.status(200).send({ playlist });
+    return res.status(200).send(response);
+  } catch (err) {
+    console.log(err);
+  }
 }
 
-module.exports = { getPlaylist, selectSong, exportPlaylist };
+async function exportSelectedSongs(req, res) {
+  const sessionManager = SessionManager.getInstance();
+  const session = JSON.parse(await sessionManager.get(req.cookieKey));
+  const { id: playlistId } = session.playlist;
+
+  const promises = [];
+  session.playlist.selected.forEach((songId) => {
+    promises.push(axiosInstance('get', session.spotify.access_token, fmt('track', songId)));
+  });
+  const response = await Promise.all(promises);
+  const tracks = response.reduce((prev, curr) => {
+    const artists = curr.data.artists.reduce((prev, curr) => {
+      prev.push(curr.name.replace(',', ' '));
+      return prev;
+    }, []).join('; ')
+    const track = {
+      name: curr.data.name.replace(',', ' '),
+      album: curr.data.album.name.replace(',', ' '),
+      artists,
+      cover: curr.data.album.images[0].url,
+    };
+    prev.push(track);
+    return prev;
+  }, []);
+
+  const header = ['name', 'album', 'artists', 'cover'];
+
+  res.attachment(`${playlistId}.csv`).send(buildCsv(header, tracks));
+}
+
+async function recursiveFetch(playlist, token, response, next) {
+  const _next = response.tracks.length && next
+    ? next
+    : fmt('tracks', playlist, '?offset=0');
+
+  if (!next && response.tracks.length) return response;
+  const tracks = await axiosInstance('get', token, _next);
+  response.tracks.push(...tracks.data.items);
+  await sleep();
+  return await recursiveFetch(playlist, token, response, tracks.data.next);
+}
+
+module.exports = { getPlaylist, selectSong, exportPlaylist, exportSelectedSongs };

@@ -33,8 +33,8 @@
     </div>
     <div class="selected">
       {% set exportSelectedUrl = "/playlist/" + id + "/export" %}
-      <a href="{{ exportSelectedUrl }}">Export selected</a>
-      <a href="{{ exportSelectedUrl }}">Export all</a>
+      <a href="{{ exportSelectedUrl }}/selected">Export selected</a>
+      <a href="{{ exportSelectedUrl }}/all">Export all</a>
       <span><span id="total-selected">{{ totalSelected }}</span> / {{ playlistTotal }} selected</span>
     </div>
   </div>

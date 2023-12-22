@@ -27,32 +27,6 @@ async function callback (req, res) {
   await sessionManager.add(key, { spotify });
 
   return res.redirect('/playlists');
-
-  //return res.redirect('/');
-
-  // const playlist = await axios.get(`https://api.spotify.com/v1/playlists/some-id`, {
-  //     headers: {
-  //         'Authorization': `Bearer ${credentials.data.access_token}`,
-  //     },
-  // });
-
-  // const tracks = playlist.data.tracks.items.reduce((items, item) => {
-  //     items.push({
-  //         name: item.track.name,
-  //         artist: item.track.artists[0].name,
-  //     });
-  //     return items;
-  // }, []).map(t => Object.values(t));
-
-  // res
-  // .set({
-  //   "Content-Type": "text/csv",
-  //   "Content-Disposition": `attachment; filename="tracks.csv"`,
-  // }).send([['name', 'artist'].join(','), ...tracks].join('\n'));
-
-  // return res.render('playlists.njk', {
-  //   playlists: playlists.data.items,
-  // });
 }
 
 module.exports = callback;

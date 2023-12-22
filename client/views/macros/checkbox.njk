@@ -1,7 +1,12 @@
 {% macro checkbox(params) %}
-  <input type="checkbox"
-         {% if params.id %}id="{{ params.id }}"{% endif %}
-         {% for key, value in params.attributes %}{{ key }}="{{ value }}"{% endfor %}
-         {{ "checked" if params.checked }}
-  />
+  <label for="{{ params.id }}" class="checkbox">
+    <input type="checkbox" class="checkbox__item"
+           {% if params.id %}id="{{ params.id }}"{% endif %}
+    {% for key, value in params.attributes %}{{ key }}="{{ value }}"{% endfor %}
+    {{ "checked" if params.checked }}
+    />
+    <span class="checkbox__checkmark">
+      {% include "icons/checkmark.njk" %}
+    </span>
+  </label>
 {% endmacro %}

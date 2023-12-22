@@ -1,5 +1,4 @@
-const axios = require('axios');
-const { constants, pagination, fmt } = require('../utils');
+const { constants, pagination, fmt, axiosInstance } = require('../utils');
 const SessionManager = require('../modules/session-manager');
 
 module.exports = async function playlists (req, res) {
@@ -14,17 +13,8 @@ module.exports = async function playlists (req, res) {
   const session = JSON.parse(await sessionManager.get(req.cookieKey));
 
   try {
-    const user = await axios.get(fmt('user'), {
-      headers: {
-        'Authorization': `Bearer ${session.spotify.access_token}`,
-      },
-    });
-
-    const playlists = await axios.get(fmt('playlists', user.data.id, params), {
-      headers: {
-        'Authorization': `Bearer ${session.spotify.access_token}`,
-      },
-    });
+    const user = await axiosInstance('get', session.spotify.access_token, fmt('user'));
+    const playlists = await axiosInstance('get', session.spotify.access_token, fmt('playlists', user.data.id, params));
 
     delete session.playlist;
     await sessionManager.update(req.cookieKey, session);

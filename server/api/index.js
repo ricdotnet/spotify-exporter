@@ -1,5 +1,14 @@
 const { Router } = require('express');
-const { home, login, callback, getPlaylist, playlists, selectSong, exportPlaylist } = require('../controllers');
+const {
+  home,
+  login,
+  callback,
+  getPlaylist,
+  playlists,
+  selectSong,
+  exportPlaylist,
+  exportSelectedSongs
+} = require('../controllers');
 const SessionManager = require('../modules/session-manager');
 
 const api = Router();
@@ -10,7 +19,8 @@ api.get('/callback', callback);
 api.get('/playlists', playlists);
 api.get('/playlist/:playlist', getPlaylist);
 api.post('/playlist/:playlist/song/:song/select', selectSong);
-api.get('/playlist/:playlist/export', exportPlaylist);
+api.get('/playlist/:playlist/export/selected', exportSelectedSongs);
+api.get('/playlist/:playlist/export/all', exportPlaylist)
 
 api.get('/logout', (req, res) => {
   const sessionManager = SessionManager.getInstance();
