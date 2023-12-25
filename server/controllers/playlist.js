@@ -108,11 +108,11 @@ async function exportSelectedSongs(req, res) {
   const session = JSON.parse(await sessionManager.get(req.cookieKey));
   const { id: playlistId } = session.playlist;
 
-  const promises = [];
+  const trackRequests = [];
   session.playlist.selected.forEach((songId) => {
-    promises.push(axiosInstance('get', session.spotify.access_token, fmt('track', songId)));
+    trackRequests.push(axiosInstance('get', session.spotify.access_token, fmt('track', songId)));
   });
-  const response = await Promise.all(promises);
+  const response = await Promise.all(trackRequests);
   const tracks = response.reduce((prev, curr) => {
     const artists = curr.data.artists.reduce((prev, curr) => {
       prev.push(curr.name.replace(',', ' '));
