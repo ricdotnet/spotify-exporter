@@ -129,6 +129,11 @@
   resolved "https://registry.yarnpkg.com/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.4.15.tgz#d7c6e6755c78567a951e04ab52ef0fd26de59f32"
   integrity sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg==
 
+"@ricdotnet/logger@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@ricdotnet/logger/-/logger-0.2.2.tgz#9c98e8315a8066640082bb988a0b5e6d27bdaa65"
+  integrity sha512-yLZRiSXLpki6q3CEug7+fN6SbY4BW8RbUjqpw5Kra2rZwe6+fImgvgHe390X1fHYyEMjP13mqI95H3+Vi9FLPw==
+
 "@rollup/plugin-commonjs@^25.0.4":
   version "25.0.7"
   resolved "https://registry.yarnpkg.com/@rollup/plugin-commonjs/-/plugin-commonjs-25.0.7.tgz#145cec7589ad952171aeb6a585bbeabd0fd3b4cf"

@@ -7,17 +7,15 @@ const { api } = require('./api');
 const auth = require('./middlewares/auth');
 const { Nunjucks } = require('./modules/nunjucks');
 const SessionManager = require('./modules/session-manager');
+const { Logger } = require('@ricdotnet/logger/dist');
+const { Constants: Colors } = require('@ricdotnet/logger/dist/src/Constants');
 
 const app = express();
 const development = process.env.NODE_ENV === 'development';
 
 new Nunjucks(app).loadFilters();
 new SessionManager({ storage: 'file' });
-
-app.use((req, _res, next) => {
-  console.log(req.method, ':', req.url);
-  next();
-});
+new Logger({ directory: 'logs', logToFile: true, });
 
 // app.use(auth);
 
@@ -39,6 +37,15 @@ app.use((req, res, next) => {
     });
   }
 
+  next();
+});
+
+app.use(async (req, _res, next) => {
+  let logMessage = `${req.method}: ${req.url}`;
+  if (req.headers.cookie) {
+    logMessage += `\n${Colors.TEXT_GREEN}[COOKIE]:${Colors.RESET} ${req.headers.cookie}`;
+  }
+  Logger.get().info(logMessage);
   next();
 });
 
@@ -67,4 +74,6 @@ app.use((_req, res, next) => {
 });
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`Serving on: ${process.env.BASE_DOMAIN}`));
+app.listen(PORT, () => {
+  Logger.get().info(`Serving on: ${process.env.BASE_DOMAIN}`)
+});

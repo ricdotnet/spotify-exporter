@@ -9,3 +9,4 @@ dist
 build
 dev
 */sessions/session_*
+/logs
