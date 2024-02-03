@@ -1,9 +1,10 @@
 const { constants, pagination, fmt, sleep, axiosInstance, buildCsv } = require('../utils');
 const SessionManager = require("../modules/session-manager");
+const { errors } = require('../utils/constants');
 
 async function getPlaylist(req, res) {
   const { playlist } = req.params;
-  const { page } = req.query;
+  const { page, error } = req.query;
   let params = `?limit=${constants.PAGE_SIZE}`;
 
   if (page) {
@@ -12,6 +13,10 @@ async function getPlaylist(req, res) {
 
   const sessionManager = SessionManager.getInstance();
   const session = JSON.parse(await sessionManager.get(req.cookieKey));
+  
+  if (error === errors.NONE_SELECTED) {
+    console.log('show an error');
+  }
 
   try {
     const endpoints = [];
@@ -129,6 +134,11 @@ async function exportSelectedSongs(req, res) {
   }, []);
 
   const header = ['name', 'album', 'artists', 'cover'];
+  
+  if (!tracks.length) {
+    
+    return res.redirect(`/playlist/${playlistId}`);
+  }
 
   res.attachment(`${playlistId}.csv`).send(buildCsv(header, tracks));
 }

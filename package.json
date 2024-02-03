@@ -23,5 +23,6 @@
     "gulp-nodemon": "^2.5.0",
     "rollup": "^3.28.0",
     "vitest": "^0.34.2"
-  }
+  },
+  "packageManager": "yarn@3.6.4"
 }

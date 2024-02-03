@@ -19,14 +19,18 @@ new Logger({ directory: 'logs', logToFile: true, });
 
 // app.use(auth);
 
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
   const cookie = req.headers.cookie;
+  
+  req.on('end', () => {
+    console.log(req.session);
+  });
 
   if (cookie) {
     const sessionManager = SessionManager.getInstance();
 
     const [_, cookieKey] = cookie.split('=');
-    req.session = sessionManager.get(cookieKey);
+    req.session = await sessionManager.get(cookieKey);
     req.cookieKey = cookieKey;
 
     res.locals.authed = true;

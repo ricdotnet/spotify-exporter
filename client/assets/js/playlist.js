@@ -15,6 +15,4 @@ async function selectSong(event) {
   if (totalSelected) {
     totalSelected.textContent = data.totalSelected;
   }
-
-  console.log(data);
 }
